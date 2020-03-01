@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>パンデミックウォー</title>
+  <link rel="stylesheet" href="css/movie.css">
+  <script src="js/i2d.js" type="text/javascript"></script>
+  <script src="js/three.min.js" type="text/javascript"></script>
+  <script src="js/loader.js" type="text/javascript"></script>
+  <script src="js/split.js" type="text/javascript"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+</head>
+<body id="body">
+
+  <div id="login-name">
+
+  </div>
+  <div class="movie" id="loginmovie">
+    <video src="movie/login.mp4" width="960" autoplay loop muted style="vertical-align: middle" preload="metadata"></video>
+  </div>
+  <section class="login-name-wrapper" id="login-name-wrapper">
+  <!-- <video src="movie/smoke.mp4" autoplay preload="metadata"></video> -->
+  <h1 id="username">
+  </h1>
+</section>
+
+  <div class="container_main">
+    <div class="container_2d"></div>
+    <div class="container_3d"></div>
+  </div>
+  <!--ルート画面-->
+  <div class="earth-root" id="earth-root">
+    <h1 class="root-text">ルート解析中</h1>
+    <video src="movie/earth-root.mp4" width="700" autoplay loop muted style="vertical-align: middle" preload="metadata"></video>
+  </div>
+
+
+  <!--world_map-->
+  <div class="world_map" id="world_map">
+    <video src="movie/world.mp4" width="1000" autoplay loop muted style="vertical-align: middle" preload="metadata"></video>
+  </div>
+
+  <!--マトリックス表示-->
+
+  <div class="mt" id="mt">
+  <div class="effects"></div>
+<div class="overlays">
+        <div class="msgbox"><span></span></div>
+        <div class="loading"><span>NOWLOADHING</span></div>
+        <div class="error"><span>COMPLETE</span></div>
+</div>
+<div class="news"></div>
+<div class="bgtext"></div>
+<div class="bgtextbig"></div>
+<canvas id="c"></canvas>
+</div>
+
+
+
+
+<div class="inner" id="inner">
+  <div class="control-panel">
+    <div class="control-panel-monitor">
+      <div class="control-panel-inner-panel">
+        <p>ウイルスデータを受け取りました</p>
+        <p>このウイルスはとても危険です</p>
+        <p>ワクチンを開発しております</p>
+        <p>ワクチンが開発されました</p>
+      </div>
+    </div>
+    <div class="control-panel-controls">
+      <div class="control-panel-inner-panel"></div>
+    </div>
+  </div>
+</div>
+
+<div class="logo-img">
+  <a href="top/index.html">
+      <img src="movie/logo.png" width="300px" alt="">
+    </a>
+   </div>
+
+
+
+  <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.6.0/firebase-firestore.js"></script>
+
+  <script>
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDCVqvy1gzjB4bF6ufYCoKhv1cYOQTgYs0",
+      authDomain: "airis-61963.firebaseapp.com",
+      databaseURL: "https://airis-61963.firebaseio.com",
+      projectId: "airis-61963",
+      storageBucket: "airis-61963.appspot.com",
+      messagingSenderId: "558285874006",
+      appId: "1:558285874006:web:bfe1257eb598cacafcecf7"
+    };
+    // Firebaseの初期化
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+
+    // アクションを受け取る処理
+    const now = firebase.firestore.Timestamp.fromDate(new Date());
+    if(now){
+      db.collection("action-history")
+        .where("createdAt", ">", now)
+        .onSnapshot(function (snapshot) {
+          snapshot.docChanges().forEach(function (change) {
+            const data = change.doc.data();
+            if (data.createdAt) {
+              if (change.type === "added" || change.type === "modified") {
+                // 新規データが取得できた後に行う処理
+                // console.log(data);
+                let user = data.user;
+                document.getElementById('username').textContent = user+"様ようこそ";
+                let namewrapper = document.getElementById('login-name-wrapper');
+                let loginmovie = document.getElementById('loginmovie');
+                namewrapper.style.display="block";
+                loginmovie.style.display="block";
+                // console.log(data.type);
+              }
+            }
+          });
+        });
+    }
+
+
+    const logindb = db.collection("login-history").where("createdAt", ">", now);
+    logindb.onSnapshot(function (snapshot) {
+      snapshot.docChanges().forEach(function (change) {
+        const data = change.doc.data();
+        if (data.createdAt) {
+          if (change.type === "added" || change.type === "modified") {
+            // ドローン飛ばす画面
+            let mt = document.getElementById('mt');
+            let earthroot = document.getElementById('earth-root');
+            mt.style.display="block";
+            earthroot.style.display="block";
+
+            setTimeout(function(){
+              let world_map = document.getElementById('world_map');
+              world_map.style.display="block";
+}, 8000);
+
+          }
+        }
+      });
+    });
+
+    const vdb = db.collection("v-history").where("createdAt", ">", now);
+ vdb.onSnapshot(function (snapshot) {
+   snapshot.docChanges().forEach(function (change) {
+     const data = change.doc.data();
+     if (data.createdAt) {
+       if (change.type === "added" || change.type === "modified") {
+         // console.log("あ");
+         let inner = document.getElementById('inner');
+         inner.style.display="block";
+       }
+     }
+   });
+ });
+  </script>
+
+  <script src="js/jquery-3.4.1.min.js" type="text/javascript"></script>
+  <script src="js/top.js" type="text/javascript"></script>
+
+
+</body>
+</html>
